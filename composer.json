@@ -1,0 +1,14 @@
+{
+    "name": "wenqing/laravel-edit",
+    "description": "laravel edit wenqing",
+    "type": "php",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "wenqingqaq",
+            "email": "1169125055@qq.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
