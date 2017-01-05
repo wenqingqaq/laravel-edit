@@ -28,6 +28,7 @@ class QiNiuStorage implements StorageInterface
      */
     public function store(UploadedFile $file, $filename)
     {
+        dd('test');
         // TODO: Implement store() method.
     }
 
