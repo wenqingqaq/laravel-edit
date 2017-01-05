@@ -90,7 +90,7 @@ class StorageManager extends Manager
      */
     public function getDefaultDriver()
     {
-        return 'local';
+        return config('ueditor.disk','local');
     }
 
     /**
@@ -104,9 +104,8 @@ class StorageManager extends Manager
     }
 
     /**
-     * Make qiniu storage.
-     *
-     * @return \Overtrue\LaravelUEditor\QiNiuStorage
+     * 创建七牛的存储
+     * @return QiNiuStorage
      */
     public function createQiniuDriver()
     {
@@ -148,8 +147,15 @@ class StorageManager extends Manager
     protected function getFilename(UploadedFile $file, array $config)
     {
         $ext = '.'.($file->getClientOriginalExtension() ?: $file->guessClientExtension());
-
-        return str_finish($this->formatPath($config['path_format']), '/').md5($file->getFilename()).$ext;
+        if(config('ueditor.disk') == 'qiniu')
+        {
+            $str = str_finish($this->formatPath($config['path_format']), '_').md5($file->getFilename()).$ext;
+        }
+        else
+        {
+            $str = str_finish($this->formatPath($config['path_format']), '/').md5($file->getFilename()).$ext;
+        }
+        return $str;
     }
 
     /**
@@ -207,16 +213,23 @@ class StorageManager extends Manager
      */
     public function formatPath($path)
     {
-        $time = time();
-        $partials = explode('-', date('Y-y-m-d-H-i-s'));
-        $replacement = ['{yyyy}','{yy}', '{mm}', '{dd}', '{hh}', '{ii}', '{ss}'];
-        $path = str_replace($replacement, $partials, $path);
-        $path = str_replace('{time}', $time, $path);
+        if(config('ueditor.disk') == 'qiniu')
+        {
+            $path = 'uploads_image_'.date('Y_m_d').'_';
+        }
+        else
+        {
+            $time = time();
+            $partials = explode('-', date('Y-y-m-d-H-i-s'));
+            $replacement = ['{yyyy}','{yy}', '{mm}', '{dd}', '{hh}', '{ii}', '{ss}'];
+            $path = str_replace($replacement, $partials, $path);
+            $path = str_replace('{time}', $time, $path);
 
-        //替换随机字符串
-        $randNum = rand(1, 10000000000).rand(1, 10000000000);
-        if (preg_match("/\{rand\:([\d]*)\}/i", $path, $matches)) {
-            $path = preg_replace("/\{rand\:[\d]*\}/i", substr($randNum, 0, $matches[1]), $path);
+            //替换随机字符串
+            $randNum = rand(1, mt_getrandmax()).rand(1, mt_getrandmax());
+            if (preg_match("/\{rand\:([\d]*)\}/i", $path, $matches)) {
+                $path = preg_replace("/\{rand\:[\d]*\}/i", substr($randNum, 0, $matches[1]), $path);
+            }
         }
 
         return $path;

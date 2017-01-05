@@ -11,6 +11,9 @@
  */
 namespace Wenqing\LaravelEdit;
 
+use Exception;
+use Qiniu\Auth;
+use Qiniu\Storage\UploadManager;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
@@ -18,18 +21,23 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  */
 class QiNiuStorage implements StorageInterface
 {
-    /**
-     * Store file.
-     *
-     * @param \Symfony\Component\HttpFoundation\File\UploadedFile $file
-     * @param string                                              $filename
-     *
-     * @return mixed
-     */
+
     public function store(UploadedFile $file, $filename)
     {
-        dd('test');
-        // TODO: Implement store() method.
+        try{
+            $locFile = $file->getPathname();
+            $auth = new Auth(config('ueditor.qiniu.accessKey'),config('ueditor.qiniu.secretKey'));
+            $token = $auth->uploadToken(config('ueditor.qiniu.bucket'));
+            $uploadMgr = new UploadManager();
+            list($ret, $err) = $uploadMgr->putFile($token, $filename, $locFile);
+            if ($err !== null) {
+                abort(400,'qiniu error');
+            } else {
+                return true;
+            }
+        }catch (Exception $e){
+
+        }
     }
 
     /**
@@ -56,6 +64,6 @@ class QiNiuStorage implements StorageInterface
      */
     public function getUrl($filename)
     {
-        // TODO: Implement getUrl() method.
+        return config('ueditor.qiniu.url').'/'.$filename;
     }
 }

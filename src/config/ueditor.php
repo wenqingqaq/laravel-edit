@@ -3,6 +3,12 @@
 return [
     // 存储引擎:filesystem.php 中 disks
     'disk' => 'local',
+    'qiniu' => [
+        'accessKey'=>'',
+        'secretKey'=>'',
+        'bucket'=>'',
+        'url'=>''
+    ],
 
     'route' => [
         'name' => '/ueditor/server',

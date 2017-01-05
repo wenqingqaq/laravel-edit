@@ -21,14 +21,11 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 class LocalStorage implements StorageInterface
 {
     /**
-     * Store file.
-     *
-     * @param \Symfony\Component\HttpFoundation\File\UploadedFile $file
-     * @param string                                              $filename
-     *
-     * @return mixed
-     *
-     * @throws \Overtrue\LaravelUEditor\StoreErrorException
+     * 本地保存文件
+     * @param UploadedFile $file
+     * @param string $filename
+     * @return \Symfony\Component\HttpFoundation\File\File
+     * @throws StoreErrorException
      */
     public function store(UploadedFile $file, $filename)
     {
