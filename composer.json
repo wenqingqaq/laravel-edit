@@ -9,6 +9,11 @@
             "email": "1169125055@qq.com"
         }
     ],
+    "autoload": {
+        "psr-4":{
+            "Wenqing\\LaravelEdit\\":"src/"
+        }
+    },
     "minimum-stability": "dev",
     "require": {}
 }
